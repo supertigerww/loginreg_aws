@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Items</title>
+</head>
+<body>
+    <div class=header>
+        <a href="/dashboard">Home</a>
+        <a href="/logout">Logout</a>
+    </div>
+    <div class=showitem>
+
+        <p>Users who added this product/item under their wish list:</p>
+        {%for user in wished_users%}
+        {{user.name}}
+        {%endfor%}
+    </div>
+</body>
+</html>

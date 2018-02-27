@@ -7,8 +7,49 @@
     <title>Welcome</title>
 </head>
 <body>
-    <h1>Success!Welcome!{{request.session.currentuser_name}}</h1>
-    <p>You have successfully logged in / Registered!</p>
-    <a href="/logout">logout</a>
+    <div class=header>
+            <h1>Welcome!{{request.session.currentuser_name}}</h1>
+            <a href="/logout">logout</a>
+    </div>
+    <div class=tables>
+        <p>Your wish list</p>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Added by</th>
+                <th>Date Added</th>
+                <th>Action</th>
+            </tr>
+            {%for item in youritems%}
+            <tr>
+                <td><a href="/wish_items/{{item.id}}">{{item.name}}</a></td>
+                <td>Creater</td>
+                <td>{{item.created_at}}</td>
+                <td><a href="removewishlist/{{item.id}}">Remove this item from wishlist</a></td>
+                
+            </tr>
+            {%endfor%}
+        </table>
+        <p>Other User's Wish List</p>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Added by</th>
+                <th>Date Added</th>
+                <th>Action</th>
+            </tr>
+            {%for item in otheritems%}
+            <tr>
+                <td><a href="/wish_items/{{item.id}}">{{item.name}}</a></td>
+                <td>Creater</td>
+                <td>{{item.created_at}}</td>
+                <td><a href="/addwishlistprocess/{{item.id}}">Add to my Wishlist</a></td>
+            </tr>
+            {%endfor%}
+        </table>
+    </div>
+    <a href="/wish_items/create">Add a new item</a>
+    
+
 </body>
 </html>
