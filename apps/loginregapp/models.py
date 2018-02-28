@@ -74,6 +74,7 @@ class user(models.Model):
 class item(models.Model):
     name = models.CharField(max_length=255)
     users = models.ManyToManyField(user, related_name="wished_items")
+    added_by = models.ForeignKey(user,related_name="added_item")
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = itemmanager()

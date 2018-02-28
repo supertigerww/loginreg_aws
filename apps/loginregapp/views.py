@@ -14,8 +14,7 @@ def register(request):
     if request.method == 'POST':
         errors =  user.objects.validation(request.POST)
         if 'user' in errors:
-            request.session['currentuser_id']=errors['user'].id
-            request.session['currentuser_name']=errors['user'].name
+            request.session['currentuser']=errors['user']
             
             return redirect('/dashboard')
         else:
@@ -32,20 +31,17 @@ def login(request):
             return redirect('/main')
     else:
         currentuser=user.objects.get(username=request.POST['username'])
-        request.session['currentuser_id']=currentuser.id
-        request.session['currentuser_name']=currentuser.name
+        request.session['currentuser']=currentuser
         return redirect('/dashboard')
 def success(request):
-    if "currentuser_id"  in request.session:
+    if "currentuser"  in request.session:
+        showuser = request.session['currentuser']
         context={
-            "userid":request.session['currentuser_id'],
-            "user_name":request.session['currentuser_name'],
-            "youritems":item.objects.raw("SELECT * FROM loginregapp_item JOIN loginregapp_item_users ON loginregapp_item.id=loginregapp_item_users.item_id JOIN loginregapp_user ON loginregapp_user.id=loginregapp_item_users.user_id"),
-            "otheritems":item.objects.raw("SELECT * FROM loginregapp_item JOIN loginregapp_item_users ON loginregapp_item.id=loginregapp_item_users.item_id JOIN loginregapp_user ON loginregapp_user.id=loginregapp_item_users.user_id"),
-            
-            
+            "currentuser":showuser,
+            "youritems":showuser.wished_items.all(),
 
-        }
+            "otheritems":item.objects.exclude(users=showuser)
+            }
         return render(request, 'loginregapp/success.html',context)
     else:
         return redirect('/main')
@@ -60,8 +56,8 @@ def createprocess(request):
                 messages.error(request, error, extra_tags=newitem)
             return redirect('/wish_items/create')
         else:
-            newitem=item.objects.create(name=request.POST['name'])
-            newitem.users.add(request.session['currentuser_id'])
+            newitem=item.objects.create(name=request.POST['name'],added_by=request.session['currentuser'])
+            newitem.users.add(request.session['currentuser'])
             return redirect('/dashboard')
     else:
         return redirect('/wish_items/create')
@@ -74,12 +70,12 @@ def showitem(request,id):
     return render(request, 'loginregapp/show.html',iteminfo)
 def addwishlistprocess(request,id):
     this_item=item.objects.get(id=id)
-    this_user=user.objects.get(name=request.session['currentuser_name'])
+    this_user=user.objects.get(name=request.session['currentuser'].name)
     this_item.users.add(this_user)
     return redirect('/dashboard')
 def removewishlist(request,id):
     this_item=item.objects.get(id=id)
-    this_user=user.objects.get(name=request.session['currentuser_name'])
+    this_user=user.objects.get(name=request.session['currentuser'].name)
     this_item.users.remove(this_user)
     return redirect('/dashboard')
 def delete(request,id):

@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class=header>
-            <h1>Welcome!{{request.session.currentuser_name}}</h1>
+            <h1>Welcome!{{request.session.currentuser.name}}</h1>
             <a href="/logout">logout</a>
     </div>
     <div class=tables>
@@ -23,9 +23,13 @@
             {%for item in youritems%}
             <tr>
                 <td><a href="/wish_items/{{item.id}}">{{item.name}}</a></td>
-                <td>Creater</td>
+                <td>{{item.added_by.name}}</td>
                 <td>{{item.created_at}}</td>
-                <td><a href="removewishlist/{{item.id}}">Remove this item from wishlist</a></td>
+                {%if item.added_by.name == currentuser.name %}
+                <td><a href="/delete/{{item.id}}">delete</a></td>
+                {%else%}
+                <td><a href="/removewishlist/{{item.id}}">Remove this item from wishlist</a></td>
+                {%endif%}
                 
             </tr>
             {%endfor%}
@@ -41,7 +45,7 @@
             {%for item in otheritems%}
             <tr>
                 <td><a href="/wish_items/{{item.id}}">{{item.name}}</a></td>
-                <td>Creater</td>
+                <td>{{item.users.first.name}}</td>
                 <td>{{item.created_at}}</td>
                 <td><a href="/addwishlistprocess/{{item.id}}">Add to my Wishlist</a></td>
             </tr>
